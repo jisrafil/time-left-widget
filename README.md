@@ -5,6 +5,8 @@ Self-hosted, subscription-free widgets for Joni's Notion hubs.
 ## Widgets
 
 - Clock and date
+- Animated flip clock
+- Pomodoro focus timer
 - Countdown
 - Time left in the current month
 - Time-aware greeting
