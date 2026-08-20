@@ -7,6 +7,7 @@ Self-hosted, subscription-free widgets for Joni's Notion hubs.
 - Clock and date
 - Animated flip clock
 - Pomodoro focus timer
+- Live weather forecast powered by Open-Meteo
 - Countdown
 - Time left in the current month
 - Time-aware greeting
