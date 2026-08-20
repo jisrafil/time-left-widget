@@ -20,6 +20,8 @@
       <h2>Widget Builder</h2>
       <label>Widget
         <select id="widget">
+          <option value="flip-clock">Flip clock</option>
+          <option value="pomodoro">Pomodoro timer</option>
           <option value="clock">Clock + date</option>
           <option value="countdown">Countdown</option>
           <option value="month-left">Time left this month</option>
@@ -40,9 +42,18 @@
         </select>
       </label>
       <label>Title or label <input id="title" value="Make today count"></label>
+      <label id="formatRow">Clock format
+        <select id="hour12">
+          <option value="1">12-hour</option>
+          <option value="0">24-hour</option>
+        </select>
+      </label>
       <label id="dateRow">Target date <input id="date" type="datetime-local"></label>
       <label id="nameRow">Name <input id="name" value="Joni"></label>
       <label id="valueRow">Progress percent <input id="value" type="number" min="0" max="100" value="68"></label>
+      <label id="focusRow">Focus minutes <input id="focus" type="number" min="1" max="180" value="25"></label>
+      <label id="shortRow">Short break minutes <input id="short" type="number" min="1" max="60" value="5"></label>
+      <label id="longRow">Long break minutes <input id="long" type="number" min="1" max="90" value="15"></label>
       <label><input id="transparent" type="checkbox" style="width:auto;min-height:auto"> Transparent outer background</label>
       <div class="actions">
         <button type="button" id="copy">Copy embed URL</button>
@@ -55,6 +66,8 @@
   </section>
 
   <section class="cards">
+    <a class="card" href="flip-clock/"><strong>Flip clock</strong><span>Animated clock cards with 12- or 24-hour time.</span></a>
+    <a class="card" href="pomodoro/"><strong>Pomodoro timer</strong><span>A working focus timer with two break modes.</span></a>
     <a class="card" href="clock/"><strong>Clock + date</strong><span>Live time, weekday, and date.</span></a>
     <a class="card" href="countdown/"><strong>Countdown</strong><span>Count down to any date or event.</span></a>
     <a class="card" href="month-left/"><strong>Time left this month</strong><span>Your original idea, rebuilt responsively.</span></a>
@@ -67,24 +80,37 @@
 <script>
   const el = (id) => document.getElementById(id);
   const widgetFields = {
+    "flip-clock": ["formatRow"], pomodoro: ["focusRow","shortRow","longRow"],
     clock: [], countdown: ["dateRow"], "month-left": [], greeting: ["nameRow"], quote: [], progress: ["valueRow"]
   };
   function buildUrl() {
-    ["dateRow","nameRow","valueRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
+    ["formatRow","dateRow","nameRow","valueRow","focusRow","shortRow","longRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
     const url = new URL(`${el("widget").value}/`, location.href);
     url.searchParams.set("theme", el("theme").value);
     if (el("title").value.trim()) url.searchParams.set("title", el("title").value.trim());
     if (el("widget").value === "countdown" && el("date").value) url.searchParams.set("date", new Date(el("date").value).toISOString());
     if (el("widget").value === "greeting") url.searchParams.set("name", el("name").value.trim() || "Joni");
     if (el("widget").value === "progress") url.searchParams.set("value", el("value").value || "0");
+    if (el("widget").value === "flip-clock") url.searchParams.set("hour12", el("hour12").value);
+    if (el("widget").value === "pomodoro") {
+      url.searchParams.set("focus", el("focus").value || "25");
+      url.searchParams.set("short", el("short").value || "5");
+      url.searchParams.set("long", el("long").value || "15");
+    }
     if (el("transparent").checked) url.searchParams.set("transparent", "1");
     el("url").textContent = url.href;
     el("preview").src = url.href;
     return url.href;
   }
   el("builder").addEventListener("input", buildUrl);
+  async function copyText(value) {
+    try { await navigator.clipboard.writeText(value); }
+    catch {
+      const area = document.createElement("textarea"); area.value = value; document.body.append(area); area.select(); document.execCommand("copy"); area.remove();
+    }
+  }
   el("copy").addEventListener("click", async () => {
-    await navigator.clipboard.writeText(buildUrl());
+    await copyText(buildUrl());
     const old = el("copy").textContent; el("copy").textContent = "Copied!"; setTimeout(() => el("copy").textContent = old, 1300);
   });
   el("open").addEventListener("click", () => window.open(buildUrl(), "_blank"));
