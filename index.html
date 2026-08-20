@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Joni's self-hosted, customizable Notion widgets.">
-  <title>Joni's Notion Widgets</title>
+  <title>Joni Widget Studio</title>
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 <main>
   <header>
     <span class="badge">Owned • reusable • subscription-free</span>
-    <h1>Joni's Notion Widgets</h1>
-    <p>Choose a widget, select a hub theme, preview it live, and copy the finished URL into a Notion <strong>/embed</strong> block.</p>
+    <h1>Joni Widget Studio</h1>
+    <p>Your self-hosted widget workshop. Choose a widget, select a hub theme, preview it live, and copy the finished URL into a Notion <strong>/embed</strong> block.</p>
   </header>
 
   <section class="layout">
@@ -29,6 +29,9 @@
           <option value="greeting">Greeting</option>
           <option value="quote">Rotating quote</option>
           <option value="progress">Progress ring</option>
+          <option value="quick-links">Quick-link button bar</option>
+          <option value="chairapy-status">Chairapy appointment status</option>
+          <option value="recipe-roulette">Recipe roulette</option>
         </select>
       </label>
       <label>Theme
@@ -76,6 +79,34 @@
         </select>
       </label>
       <label id="daysRow">Forecast days <input id="days" type="number" min="1" max="7" value="7"></label>
+      <fieldset id="linksRow" hidden>
+        <legend>Quick links</legend>
+        <small class="field-help">Add up to four public links. A blank label or URL hides that button.</small>
+        <div class="link-editor">
+          <label>Button 1 label <input id="label1" value="Widget Hub"></label>
+          <label>Button 1 URL <input id="link1" inputmode="url" value="https://app.notion.com/p/2ca1b009ba998089b897e847ff8c7749"></label>
+          <label>Button 2 label <input id="label2" value="Cookbook"></label>
+          <label>Button 2 URL <input id="link2" inputmode="url" value="https://jisrafil.github.io/joni-cookbook/"></label>
+          <label>Button 3 label <input id="label3" value="Chairapy"></label>
+          <label>Button 3 URL <input id="link3" inputmode="url" value="https://www.chairapy937.com/"></label>
+          <label>Button 4 label <input id="label4" value="Widget Studio"></label>
+          <label>Button 4 URL <input id="link4" inputmode="url" value="https://jisrafil.github.io/time-left-widget/"></label>
+        </div>
+      </fieldset>
+      <label id="recipeCategoryRow">Recipe category
+        <select id="recipeCategory">
+          <option value="all">All recipes</option>
+          <option value="breakfast">Breakfast &amp; Brunch</option>
+          <option value="main">Main Dishes</option>
+          <option value="sides">Sides</option>
+          <option value="soups">Soups &amp; Stews</option>
+          <option value="salads">Salads</option>
+          <option value="appetizers">Appetizers &amp; Snacks</option>
+          <option value="breads">Breads &amp; Baking</option>
+          <option value="desserts">Desserts</option>
+          <option value="drinks">Drinks &amp; Coffee Bar</option>
+        </select>
+      </label>
       <label><input id="transparent" type="checkbox" style="width:auto;min-height:auto"> Transparent outer background</label>
       <div class="actions">
         <button type="button" id="copy">Copy embed URL</button>
@@ -97,6 +128,9 @@
     <a class="card" href="greeting/"><strong>Greeting</strong><span>A time-aware welcome for your dashboard.</span></a>
     <a class="card" href="quote/"><strong>Rotating quote</strong><span>Cycle through affirmations or reminders.</span></a>
     <a class="card" href="progress/"><strong>Progress ring</strong><span>Display a manual project percentage.</span></a>
+    <a class="card" href="quick-links/?theme=master"><strong>Quick-link button bar</strong><span>Four clean, reusable shortcuts for any Notion hub.</span></a>
+    <a class="card" href="chairapy-status/?theme=chairapy"><strong>Chairapy appointment status</strong><span>Appointment-day status, booking, text, directions, and website.</span></a>
+    <a class="card" href="recipe-roulette/?theme=cookbook"><strong>Recipe roulette</strong><span>Let Joni's real cookbook decide what to make.</span></a>
   </section>
   <div class="legacy">Your original widget remains untouched at <a href="Untitled-1.html">Untitled-1.html</a>.</div>
 </main>
@@ -104,10 +138,11 @@
   const el = (id) => document.getElementById(id);
   const widgetFields = {
     "flip-clock": ["formatRow"], pomodoro: ["focusRow","shortRow","longRow"], weather: ["locationRow","unitsRow","daysRow"],
-    clock: [], countdown: ["dateRow"], "month-left": [], greeting: ["nameRow"], quote: [], progress: ["valueRow"]
+    clock: [], countdown: ["dateRow"], "month-left": [], greeting: ["nameRow"], quote: [], progress: ["valueRow"],
+    "quick-links": ["linksRow"], "chairapy-status": [], "recipe-roulette": ["recipeCategoryRow"]
   };
   function buildUrl() {
-    ["formatRow","dateRow","nameRow","valueRow","focusRow","shortRow","longRow","locationRow","unitsRow","daysRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
+    ["formatRow","dateRow","nameRow","valueRow","focusRow","shortRow","longRow","locationRow","unitsRow","daysRow","linksRow","recipeCategoryRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
     const url = new URL(`${el("widget").value}/`, location.href);
     url.searchParams.set("theme", el("theme").value);
     el("customTheme").hidden = el("theme").value !== "custom";
@@ -130,6 +165,13 @@
       url.searchParams.set("units", el("units").value);
       url.searchParams.set("days", el("days").value || "7");
     }
+    if (el("widget").value === "quick-links") {
+      for (let number=1;number<=4;number+=1) {
+        const label=el(`label${number}`).value.trim(),link=el(`link${number}`).value.trim();
+        if (label && link) { url.searchParams.set(`label${number}`,label); url.searchParams.set(`link${number}`,link); }
+      }
+    }
+    if (el("widget").value === "recipe-roulette") url.searchParams.set("category",el("recipeCategory").value);
     if (el("transparent").checked) url.searchParams.set("transparent", "1");
     el("url").textContent = url.href;
     el("preview").src = url.href;
