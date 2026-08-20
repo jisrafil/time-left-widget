@@ -35,13 +35,14 @@
         <select id="theme">
           <option value="master">Joni Master Hub</option>
           <option value="chairapy">Chairapy</option>
+          <option value="custom">Custom colors — choose your own</option>
           <option value="cookbook">JP Cookbook</option>
           <option value="tech">Creative Tech</option>
           <option value="kenwood">Casa on Kenwood</option>
           <option value="purple">Purple</option>
           <option value="neutral">Neutral</option>
-          <option value="custom">Custom colors</option>
         </select>
+        <small class="field-help">Choose Custom colors to reveal the color pickers.</small>
       </label>
       <fieldset id="customTheme" hidden>
         <legend>Custom colors</legend>
@@ -135,6 +136,7 @@
     return url.href;
   }
   el("builder").addEventListener("input", buildUrl);
+  el("builder").addEventListener("change", buildUrl);
   async function copyText(value) {
     try { await navigator.clipboard.writeText(value); }
     catch {
@@ -146,6 +148,9 @@
     const old = el("copy").textContent; el("copy").textContent = "Copied!"; setTimeout(() => el("copy").textContent = old, 1300);
   });
   el("open").addEventListener("click", () => window.open(buildUrl(), "_blank"));
+  const incoming = new URLSearchParams(location.search);
+  if ([...el("theme").options].some(option => option.value === incoming.get("theme"))) el("theme").value = incoming.get("theme");
+  if ([...el("widget").options].some(option => option.value === incoming.get("widget"))) el("widget").value = incoming.get("widget");
   const next = new Date(); next.setDate(next.getDate() + 30); next.setMinutes(next.getMinutes() - next.getTimezoneOffset()); el("date").value = next.toISOString().slice(0,16);
   buildUrl();
 </script>
