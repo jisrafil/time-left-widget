@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quick Links</title><link rel="stylesheet" href="../assets/widget.css"></head>
+<body><main class="widget link-widget"><div class="link-shell"><div class="stack"><div class="eyebrow">Shortcuts</div><h1 class="title" data-param="title">Joni's quick links</h1></div><nav class="link-grid" id="links" aria-label="Quick links"></nav></div></main>
+<script src="../assets/widget.js"></script><script>
+const defaults=[['Widget Hub','https://app.notion.com/p/2ca1b009ba998089b897e847ff8c7749'],['Cookbook','https://jisrafil.github.io/joni-cookbook/'],['Chairapy','https://www.chairapy937.com/'],['Widget Studio','https://jisrafil.github.io/time-left-widget/']];
+const safeUrl=value=>{try{const url=new URL(value);return ['http:','https:','notion:','mailto:','tel:','sms:'].includes(url.protocol)?url.href:'';}catch{return'';}};
+const escapeText=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const links=defaults.map(([label,url],index)=>[WidgetKit.get(`label${index+1}`,label).slice(0,40),safeUrl(WidgetKit.get(`link${index+1}`,url))]).filter(([label,url])=>label&&url);
+document.getElementById('links').innerHTML=links.length?links.map(([label,url])=>`<a class="link-button" href="${escapeText(url)}" target="_blank" rel="noreferrer"><span>${escapeText(label)}</span><span class="link-arrow" aria-hidden="true">↗</span></a>`).join(''):'<span class="empty-state">Add a label and public URL in the Widget Studio.</span>';
+</script></body></html>
