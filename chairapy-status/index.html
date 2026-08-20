@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chairapy Appointment Status</title><link rel="stylesheet" href="../assets/widget.css"></head>
+<body><main class="widget status-widget"><div class="status-shell"><div class="status-mark" aria-hidden="true"><span>✦</span></div><div><div class="eyebrow">Chairapy • Dayton</div><h1 class="status-title" id="statusTitle">Appointment Day</h1></div><p class="status-detail" id="statusDetail">Tuesday–Saturday • By appointment only</p><div class="status-actions"><a class="status-action" href="https://chairapy.as.me/schedule/45c6232d" target="_blank" rel="noreferrer">Book</a><a class="status-action secondary" href="sms:+19377894024">Text</a><a class="status-action secondary" href="https://www.google.com/maps/dir/?api=1&destination=605+E+5th+St%2C+Dayton%2C+OH+45402" target="_blank" rel="noreferrer">Directions</a><a class="status-action secondary" href="https://www.chairapy937.com/" target="_blank" rel="noreferrer">Website</a></div></div></main>
+<script src="../assets/widget.js"></script><script>
+const zone='America/New_York',openDays=new Set(['Tue','Wed','Thu','Fri','Sat']);
+const dayFor=date=>new Intl.DateTimeFormat('en-US',{weekday:'short',timeZone:zone}).format(date);
+const longDate=date=>new Intl.DateTimeFormat('en-US',{weekday:'long',month:'short',day:'numeric',timeZone:zone}).format(date);
+const now=new Date(),today=dayFor(now),isAppointmentDay=openDays.has(today);
+document.getElementById('statusTitle').textContent=isAppointmentDay?'Appointment Day':'Closed Today';
+if(isAppointmentDay){document.getElementById('statusDetail').textContent='By appointment only • Book before you go';}
+else{let next=new Date(now);do{next=new Date(next.getTime()+86400000);}while(!openDays.has(dayFor(next)));document.getElementById('statusDetail').textContent=`Next appointment day: ${longDate(next)} • By appointment only`;}
+</script></body></html>

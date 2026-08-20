@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recipe Roulette</title><link rel="stylesheet" href="../assets/widget.css"></head>
+<body><main class="widget roulette-widget"><div class="roulette-shell"><div class="eyebrow">Joni's Cookbook</div><select class="roulette-select" id="category" aria-label="Recipe category"><option value="all">All recipes</option><option value="breakfast">Breakfast &amp; Brunch</option><option value="main">Main Dishes</option><option value="sides">Sides</option><option value="soups">Soups &amp; Stews</option><option value="salads">Salads</option><option value="appetizers">Appetizers &amp; Snacks</option><option value="breads">Breads &amp; Baking</option><option value="desserts">Desserts</option><option value="drinks">Drinks &amp; Coffee Bar</option></select><div class="roulette-category" id="pickedCategory">Pick something good</div><h1 class="roulette-name" id="recipeName">What are we making?</h1><div class="roulette-controls"><button class="roulette-button" id="pick" type="button">Pick a recipe</button><a class="roulette-button secondary" id="openRecipe" href="https://jisrafil.github.io/joni-cookbook/" target="_blank" rel="noreferrer">Open cookbook</a></div></div></main>
+<script src="../assets/widget.js"></script><script>
+const base='https://jisrafil.github.io/joni-cookbook/';
+const rows=`breakfast|Sausage Biscuits & Gravy|sausage-biscuits-gravy.html
+breakfast|Blueberry Buttermilk Pancakes|blueberry-buttermilk-pancakes.html
+breakfast|Cheese Grits|cheese-grits.html
+breakfast|Sausage & Egg Breakfast Burritos|sausage-egg-breakfast-burritos.html
+breakfast|French Toast Casserole|french-toast-casserole.html
+breakfast|McGriddle (Copycat)|mcgriddle-copycat.html
+breakfast|Basic Quiche|basic-quiche.html
+breakfast|Cheese-Only Quiche|cheese-only-quiche.html
+breakfast|Meat Lovers & Cheese Quiche|meat-lovers-cheese-quiche.html
+breakfast|Meat Lovers & Spinach Quiche|meat-lovers-spinach-quiche.html
+breakfast|Spinach & Cheese Quiche|spinach-cheese-quiche.html
+main|Basic Meatloaf|basic-meatloaf.html
+main|Traditional Salisbury Steak|traditional-salisbury-steak.html
+main|Red Beans and Rice|red-beans-and-rice.html
+main|Chicken Florentine|chicken-florentine.html
+main|Chicken and Dumplings|chicken-and-dumplings.html
+main|Shrimp and Grits|shrimp-and-grits.html
+main|Build-Your-Own Taco Bar|build-your-own-taco-bar.html
+main|Lasagna|lasagna.html
+main|Stuffed Shells|stuffed-shells.html
+main|Fettuccine Alfredo|fettuccine-alfredo.html
+main|Chicken Parmesan|chicken-parmesan.html
+main|BBQ Ribs|bbq-ribs.html
+main|Brisket|brisket.html
+main|Chicken & Rice Bake|chicken-rice-bake.html
+main|Spaghetti Carbonara|spaghetti-carbonara.html
+main|BBQ Chicken Drumsticks|bbq-chicken-drumsticks.html
+main|Stuffed Bell Peppers|stuffed-bell-peppers.html
+main|Stuffed Cabbage Leaves|stuffed-cabbage-leaves.html
+main|Smothered Pork Chops|smothered-pork-chops.html
+main|Barbacoa Beef|barbacoa-beef.html
+main|Pulled Pork|pulled-pork.html
+main|Chick-fil-A Nuggets (Copycat)|chick-fil-a-nuggets-copycat.html
+main|Steak Fajita Bowl|steak-fajita-bowl.html
+main|Chicken Fried Steak with Country Gravy|chicken-fried-steak-country-gravy.html
+main|JP's Angry Burgers|jp-angry-burgers.html
+main|Chicken Pot Pie|chicken-pot-pie.html
+main|Chicken Alfredo|chicken-alfredo.html
+sides|Basic Mac and Cheese (Roux-Based)|basic-mac-and-cheese-roux-based.html
+sides|Classic Potato Salad|classic-potato-salad.html
+sides|Classic Southern Potato Salad|classic-southern-potato-salad.html
+sides|Classic Coleslaw|classic-coleslaw.html
+sides|Grilled Corn on the Cob|grilled-corn-on-the-cob.html
+sides|Collard Greens|collard-greens.html
+sides|Sweet Water Cornbread|sweet-water-cornbread.html
+sides|Glorified Baked Beans|glorified-baked-beans.html
+soups|Potato Soup|potato-soup.html
+soups|Beef Stew|beef-stew.html
+soups|Stuffed Pepper Soup|stuffed-pepper-soup.html
+soups|White Chicken Chili|white-chicken-chili.html
+salads|BLT Pasta Salad|blt-pasta-salad.html
+salads|Chicken Salad|chicken-salad.html
+appetizers|Shrimp Egg Rolls|shrimp-egg-rolls.html
+appetizers|Buffalo Chicken Dip – Classic|buffalo-chicken-dip-classic.html
+breads|Plain Bagels|plain-bagels.html
+breads|Blueberry Bagels|blueberry-bagels.html
+breads|Cinnamon Raisin Bagels|cinnamon-raisin-bagels.html
+breads|Jalapeño Cheddar Bagels|jalapeno-cheddar-bagels.html
+breads|Panera-Style Blueberry Muffins|panera-style-blueberry-muffins.html
+breads|All-Butter Pie Crust|all-butter-pie-crust.html
+breads|Panera-Style Cinnamon Crunch Bagels|panera-style-cinnamon-crunch-bagels.html
+breads|Cornbread|cornbread.html
+desserts|Banana Pudding|banana-pudding.html
+desserts|Peach Cobbler|peach-cobbler.html
+desserts|Chocolate Chess Pie|chocolate-chess-pie.html
+desserts|Homemade Brownies|homemade-brownies.html
+desserts|Sweet Potato Pie|sweet-potato-pie.html
+desserts|Pecan Pie|pecan-pie.html
+desserts|Lemon Glazed Loaf|lemon-glazed-loaf.html
+desserts|Black Forest Bundt Cake|black-forest-bundt-cake.html
+drinks|Joni's Coffee Bar — 36 Recipes|coffee-bar.html
+drinks|Homemade Lemonade|homemade-lemonade.html
+drinks|Sweet Tea|sweet-tea.html`;
+const recipes=rows.trim().split('\n').map(row=>{const [category,name,path]=row.split('|');return{category,name,path};});
+const labels={breakfast:'Breakfast & Brunch',main:'Main Dishes',sides:'Sides',soups:'Soups & Stews',salads:'Salads',appetizers:'Appetizers & Snacks',breads:'Breads & Baking',desserts:'Desserts',drinks:'Drinks & Coffee Bar'};
+const select=document.getElementById('category'),nameEl=document.getElementById('recipeName'),categoryEl=document.getElementById('pickedCategory'),openEl=document.getElementById('openRecipe');let previous='';
+const incoming=WidgetKit.get('category','all');if([...select.options].some(option=>option.value===incoming))select.value=incoming;
+function pick(){const pool=recipes.filter(recipe=>select.value==='all'||recipe.category===select.value);let choice=pool[Math.floor(Math.random()*pool.length)];if(pool.length>1)while(choice.path===previous)choice=pool[Math.floor(Math.random()*pool.length)];previous=choice.path;nameEl.textContent=choice.name;categoryEl.textContent=labels[choice.category];openEl.textContent='Open recipe';openEl.href=base+choice.path;}
+document.getElementById('pick').addEventListener('click',pick);select.addEventListener('change',pick);pick();
+</script></body></html>
