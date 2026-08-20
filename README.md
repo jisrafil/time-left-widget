@@ -1,4 +1,4 @@
-# Joni's Notion Widgets
+# Joni Widget Studio
 
 Self-hosted, subscription-free widgets for Joni's Notion hubs.
 
@@ -13,6 +13,9 @@ Self-hosted, subscription-free widgets for Joni's Notion hubs.
 - Time-aware greeting
 - Rotating quote
 - Progress ring
+- Quick-link button bar
+- Chairapy appointment-status card
+- Recipe roulette using Joni's real cookbook
 
 Open `index.html` through GitHub Pages to use the visual builder and copy a finished embed URL.
 
