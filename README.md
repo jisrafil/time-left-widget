@@ -19,6 +19,8 @@ Open `index.html` through GitHub Pages to use the visual builder and copy a fini
 
 `master`, `chairapy`, `cookbook`, `tech`, `kenwood`, `purple`, and `neutral`.
 
+Choose `custom` in the visual builder to set a one-off palette without editing code. Custom colors are stored in the generated URL.
+
 ## Notion
 
 Type `/embed` in Notion and paste the generated HTTPS URL. Do not put private or sensitive information in query parameters because GitHub Pages is public.
