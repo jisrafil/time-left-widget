@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Joni's self-hosted, customizable Notion widgets.">
+  <title>Joni's Notion Widgets</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<main>
+  <header>
+    <span class="badge">Owned • reusable • subscription-free</span>
+    <h1>Joni's Notion Widgets</h1>
+    <p>Choose a widget, select a hub theme, preview it live, and copy the finished URL into a Notion <strong>/embed</strong> block.</p>
+  </header>
+
+  <section class="layout">
+    <form class="panel" id="builder">
+      <h2>Widget Builder</h2>
+      <label>Widget
+        <select id="widget">
+          <option value="clock">Clock + date</option>
+          <option value="countdown">Countdown</option>
+          <option value="month-left">Time left this month</option>
+          <option value="greeting">Greeting</option>
+          <option value="quote">Rotating quote</option>
+          <option value="progress">Progress ring</option>
+        </select>
+      </label>
+      <label>Theme
+        <select id="theme">
+          <option value="master">Joni Master Hub</option>
+          <option value="chairapy">Chairapy</option>
+          <option value="cookbook">JP Cookbook</option>
+          <option value="tech">Creative Tech</option>
+          <option value="kenwood">Casa on Kenwood</option>
+          <option value="purple">Purple</option>
+          <option value="neutral">Neutral</option>
+        </select>
+      </label>
+      <label>Title or label <input id="title" value="Make today count"></label>
+      <label id="dateRow">Target date <input id="date" type="datetime-local"></label>
+      <label id="nameRow">Name <input id="name" value="Joni"></label>
+      <label id="valueRow">Progress percent <input id="value" type="number" min="0" max="100" value="68"></label>
+      <label><input id="transparent" type="checkbox" style="width:auto;min-height:auto"> Transparent outer background</label>
+      <div class="actions">
+        <button type="button" id="copy">Copy embed URL</button>
+        <button type="button" class="secondary" id="open">Open widget</button>
+      </div>
+      <div class="url" id="url"></div>
+    </form>
+
+    <div class="panel preview"><iframe id="preview" title="Widget preview"></iframe></div>
+  </section>
+
+  <section class="cards">
+    <a class="card" href="clock/"><strong>Clock + date</strong><span>Live time, weekday, and date.</span></a>
+    <a class="card" href="countdown/"><strong>Countdown</strong><span>Count down to any date or event.</span></a>
+    <a class="card" href="month-left/"><strong>Time left this month</strong><span>Your original idea, rebuilt responsively.</span></a>
+    <a class="card" href="greeting/"><strong>Greeting</strong><span>A time-aware welcome for your dashboard.</span></a>
+    <a class="card" href="quote/"><strong>Rotating quote</strong><span>Cycle through affirmations or reminders.</span></a>
+    <a class="card" href="progress/"><strong>Progress ring</strong><span>Display a manual project percentage.</span></a>
+  </section>
+  <div class="legacy">Your original widget remains untouched at <a href="Untitled-1.html">Untitled-1.html</a>.</div>
+</main>
+<script>
+  const el = (id) => document.getElementById(id);
+  const widgetFields = {
+    clock: [], countdown: ["dateRow"], "month-left": [], greeting: ["nameRow"], quote: [], progress: ["valueRow"]
+  };
+  function buildUrl() {
+    ["dateRow","nameRow","valueRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
+    const url = new URL(`${el("widget").value}/`, location.href);
+    url.searchParams.set("theme", el("theme").value);
+    if (el("title").value.trim()) url.searchParams.set("title", el("title").value.trim());
+    if (el("widget").value === "countdown" && el("date").value) url.searchParams.set("date", new Date(el("date").value).toISOString());
+    if (el("widget").value === "greeting") url.searchParams.set("name", el("name").value.trim() || "Joni");
+    if (el("widget").value === "progress") url.searchParams.set("value", el("value").value || "0");
+    if (el("transparent").checked) url.searchParams.set("transparent", "1");
+    el("url").textContent = url.href;
+    el("preview").src = url.href;
+    return url.href;
+  }
+  el("builder").addEventListener("input", buildUrl);
+  el("copy").addEventListener("click", async () => {
+    await navigator.clipboard.writeText(buildUrl());
+    const old = el("copy").textContent; el("copy").textContent = "Copied!"; setTimeout(() => el("copy").textContent = old, 1300);
+  });
+  el("open").addEventListener("click", () => window.open(buildUrl(), "_blank"));
+  const next = new Date(); next.setDate(next.getDate() + 30); next.setMinutes(next.getMinutes() - next.getTimezoneOffset()); el("date").value = next.toISOString().slice(0,16);
+  buildUrl();
+</script>
+</body>
+</html>
