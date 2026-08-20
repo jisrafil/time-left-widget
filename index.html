@@ -39,8 +39,20 @@
           <option value="kenwood">Casa on Kenwood</option>
           <option value="purple">Purple</option>
           <option value="neutral">Neutral</option>
+          <option value="custom">Custom colors</option>
         </select>
       </label>
+      <fieldset id="customTheme" hidden>
+        <legend>Custom colors</legend>
+        <div class="color-grid">
+          <label>Outer background <input id="customBg" type="color" value="#fff8f3"></label>
+          <label>Widget background <input id="customSurface" type="color" value="#fffdf9"></label>
+          <label>Main color <input id="customPrimary" type="color" value="#e75792"></label>
+          <label>Dark color <input id="customSecondary" type="color" value="#4d190a"></label>
+          <label>Accent color <input id="customAccent" type="color" value="#f1642f"></label>
+          <label>Text color <input id="customText" type="color" value="#4d190a"></label>
+        </div>
+      </fieldset>
       <label>Title or label <input id="title" value="Make today count"></label>
       <label id="formatRow">Clock format
         <select id="hour12">
@@ -87,6 +99,11 @@
     ["formatRow","dateRow","nameRow","valueRow","focusRow","shortRow","longRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
     const url = new URL(`${el("widget").value}/`, location.href);
     url.searchParams.set("theme", el("theme").value);
+    el("customTheme").hidden = el("theme").value !== "custom";
+    if (el("theme").value === "custom") {
+      const colors = {bg:"customBg",surface:"customSurface",primary:"customPrimary",secondary:"customSecondary",accent:"customAccent",text:"customText"};
+      Object.entries(colors).forEach(([param,id]) => url.searchParams.set(param,el(id).value));
+    }
     if (el("title").value.trim()) url.searchParams.set("title", el("title").value.trim());
     if (el("widget").value === "countdown" && el("date").value) url.searchParams.set("date", new Date(el("date").value).toISOString());
     if (el("widget").value === "greeting") url.searchParams.set("name", el("name").value.trim() || "Joni");
