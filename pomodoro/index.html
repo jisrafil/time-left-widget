@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pomodoro Timer</title>
+  <link rel="stylesheet" href="../assets/widget.css">
+</head>
+<body>
+<main class="widget pomodoro-widget">
+  <div class="timer-shell">
+    <div class="eyebrow" data-param="title">Focus session</div>
+    <div class="mode-tabs" aria-label="Timer mode">
+      <button class="mode-button active" type="button" data-mode="focus">Focus</button>
+      <button class="mode-button" type="button" data-mode="short">Short break</button>
+      <button class="mode-button" type="button" data-mode="long">Long break</button>
+    </div>
+    <div class="timer-display" id="time" role="timer" aria-live="polite">25:00</div>
+    <div class="timer-progress" aria-hidden="true"><span id="progress"></span></div>
+    <div class="timer-controls">
+      <button class="timer-button" id="start" type="button">Start</button>
+      <button class="timer-button secondary" id="reset" type="button">Reset</button>
+    </div>
+    <p class="subtext" id="status">Ready when you are.</p>
+  </div>
+</main>
+<script src="../assets/widget.js"></script>
+<script>
+const durations={focus:WidgetKit.clamp(WidgetKit.get('focus','25'),1,180)*60,short:WidgetKit.clamp(WidgetKit.get('short','5'),1,60)*60,long:WidgetKit.clamp(WidgetKit.get('long','15'),1,90)*60};
+const labels={focus:'Focus',short:'Short break',long:'Long break'};
+const timeEl=document.getElementById('time'),progressEl=document.getElementById('progress'),startEl=document.getElementById('start'),statusEl=document.getElementById('status');
+let mode='focus',remaining=durations.focus,running=false,deadline=0,interval=null,audioContext=null;
+function formatTime(total){const mins=Math.floor(total/60),secs=total%60;return `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;}
+function render(){timeEl.textContent=formatTime(remaining);timeEl.setAttribute('aria-label',`${Math.floor(remaining/60)} minutes ${remaining%60} seconds remaining`);progressEl.style.width=`${Math.min(100,Math.max(0,(1-remaining/durations[mode])*100))}%`;startEl.textContent=running?'Pause':'Start';document.title=`${formatTime(remaining)} · ${labels[mode]}`;}
+function stop(){running=false;clearInterval(interval);interval=null;render();}
+function chime(){try{audioContext ||= new (window.AudioContext||window.webkitAudioContext)();const oscillator=audioContext.createOscillator(),gain=audioContext.createGain();oscillator.frequency.value=740;gain.gain.setValueAtTime(.0001,audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.16,audioContext.currentTime+.02);gain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime+.55);oscillator.connect(gain).connect(audioContext.destination);oscillator.start();oscillator.stop(audioContext.currentTime+.56);}catch{}}
+function tick(){remaining=Math.max(0,Math.ceil((deadline-Date.now())/1000));render();if(remaining===0){stop();statusEl.textContent=`${labels[mode]} complete!`;chime();}}
+function startPause(){if(running){stop();statusEl.textContent='Paused.';return;}if(remaining===0)remaining=durations[mode];try{audioContext ||= new (window.AudioContext||window.webkitAudioContext)();audioContext.resume();}catch{}running=true;deadline=Date.now()+remaining*1000;statusEl.textContent=`${labels[mode]} in progress.`;interval=setInterval(tick,250);render();}
+function reset(){stop();remaining=durations[mode];statusEl.textContent='Ready when you are.';render();}
+function choose(next){mode=next;document.querySelectorAll('[data-mode]').forEach(button=>button.classList.toggle('active',button.dataset.mode===mode));reset();}
+document.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>choose(button.dataset.mode)));
+startEl.addEventListener('click',startPause);document.getElementById('reset').addEventListener('click',reset);render();
+</script>
+</body>
+</html>
