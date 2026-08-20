@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Weather Forecast</title>
+  <link rel="stylesheet" href="../assets/widget.css">
+</head>
+<body>
+<main class="widget weather-widget">
+  <div class="weather-shell" id="weather">
+    <div class="weather-status" id="status">Loading the forecast…</div>
+  </div>
+</main>
+<script src="../assets/widget.js"></script>
+<script>
+const shell=document.getElementById('weather'),statusEl=document.getElementById('status');
+const locationName=WidgetKit.get('location','Dayton, Ohio').slice(0,100),units=WidgetKit.get('units','fahrenheit')==='celsius'?'celsius':'fahrenheit',days=WidgetKit.clamp(WidgetKit.get('days','7'),1,7);
+const descriptions={0:'clear sky',1:'mainly clear',2:'partly cloudy',3:'overcast',45:'fog',48:'rime fog',51:'light drizzle',53:'drizzle',55:'heavy drizzle',56:'freezing drizzle',57:'heavy freezing drizzle',61:'light rain',63:'rain',65:'heavy rain',66:'freezing rain',67:'heavy freezing rain',71:'light snow',73:'snow',75:'heavy snow',77:'snow grains',80:'light showers',81:'showers',82:'heavy showers',85:'snow showers',86:'heavy snow showers',95:'thunderstorm',96:'thunderstorm with hail',99:'severe thunderstorm with hail'};
+function symbol(code,isDay=true){if(code===0)return isDay?'☀︎':'☾';if(code<=2)return'☀︎';if(code===3)return'☁︎';if(code===45||code===48)return'≋';if(code>=51&&code<=67||code>=80&&code<=82)return'☂︎';if(code>=71&&code<=77||code>=85&&code<=86)return'❄︎';if(code>=95)return'⚡︎';return'☁︎';}
+const rounded=value=>Math.round(Number(value));
+const escapeText=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+async function loadWeather(){
+  statusEl && (statusEl.textContent='Loading the forecast…');
+  try{
+    const geoUrl=new URL('https://geocoding-api.open-meteo.com/v1/search');geoUrl.search=new URLSearchParams({name:locationName,count:'1',language:'en',format:'json'});
+    const geoResponse=await fetch(geoUrl);if(!geoResponse.ok)throw new Error('Location service unavailable');const geo=await geoResponse.json();const place=geo.results?.[0];if(!place)throw new Error('Location not found. Try a city and state or ZIP code.');
+    const forecastUrl=new URL('https://api.open-meteo.com/v1/forecast');forecastUrl.search=new URLSearchParams({latitude:place.latitude,longitude:place.longitude,current:'temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,is_day,wind_speed_10m',daily:'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',temperature_unit:units,wind_speed_unit:units==='fahrenheit'?'mph':'kmh',timezone:'auto',forecast_days:String(days)});
+    const response=await fetch(forecastUrl);if(!response.ok)throw new Error('Forecast service unavailable');const data=await response.json();render(data,place);
+  }catch(error){shell.innerHTML=`<div class="weather-status"><div><strong>Weather could not load.</strong><br><span>${escapeText(error.message)}</span></div></div>`;}
+}
+function render(data,place){
+  const degree=units==='fahrenheit'?'°F':'°C',windUnit=units==='fahrenheit'?'mph':'km/h',current=data.current,daily=data.daily;
+  const placeLabel=[place.name,place.admin1].filter(Boolean).join(', ');
+  const forecast=daily.time.map((date,index)=>{const day=new Date(`${date}T12:00:00`),label=index===0?'Today':day.toLocaleDateString([],{weekday:'short'});return `<div class="forecast-day" title="${escapeText(descriptions[daily.weather_code[index]]||'Weather')}"><strong>${label}</strong><span class="forecast-symbol">${symbol(daily.weather_code[index])}</span><span class="forecast-temps">${rounded(daily.temperature_2m_max[index])}° / ${rounded(daily.temperature_2m_min[index])}°</span><span class="forecast-rain">☂ ${daily.precipitation_probability_max[index]??0}%</span></div>`;}).join('');
+  shell.innerHTML=`<div class="weather-top"><div class="weather-place"><div class="eyebrow">${escapeText(placeLabel)}</div><div class="weather-current"><span class="weather-symbol">${symbol(current.weather_code,current.is_day===1)}</span><div><p class="weather-temp">${rounded(current.temperature_2m)}${degree}</p><p class="weather-condition">${escapeText(descriptions[current.weather_code]||'Current conditions')}</p></div></div></div><div class="weather-meta"><span>Feels ${rounded(current.apparent_temperature)}${degree}</span><span>Humidity ${current.relative_humidity_2m}%</span><span>Wind ${rounded(current.wind_speed_10m)} ${windUnit}</span></div></div><div class="weather-forecast">${forecast}</div><div class="weather-foot"><span>${days}-day forecast</span><a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Weather data by Open-Meteo</a></div>`;
+}
+loadWeather();setInterval(loadWeather,30*60*1000);
+</script>
+</body>
+</html>
