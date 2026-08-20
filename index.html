@@ -22,6 +22,7 @@
         <select id="widget">
           <option value="flip-clock">Flip clock</option>
           <option value="pomodoro">Pomodoro timer</option>
+          <option value="weather">Weather forecast</option>
           <option value="clock">Clock + date</option>
           <option value="countdown">Countdown</option>
           <option value="month-left">Time left this month</option>
@@ -66,6 +67,14 @@
       <label id="focusRow">Focus minutes <input id="focus" type="number" min="1" max="180" value="25"></label>
       <label id="shortRow">Short break minutes <input id="short" type="number" min="1" max="60" value="5"></label>
       <label id="longRow">Long break minutes <input id="long" type="number" min="1" max="90" value="15"></label>
+      <label id="locationRow">Weather city or ZIP <input id="location" value="Dayton, Ohio"></label>
+      <label id="unitsRow">Temperature units
+        <select id="units">
+          <option value="fahrenheit">Fahrenheit</option>
+          <option value="celsius">Celsius</option>
+        </select>
+      </label>
+      <label id="daysRow">Forecast days <input id="days" type="number" min="1" max="7" value="7"></label>
       <label><input id="transparent" type="checkbox" style="width:auto;min-height:auto"> Transparent outer background</label>
       <div class="actions">
         <button type="button" id="copy">Copy embed URL</button>
@@ -80,6 +89,7 @@
   <section class="cards">
     <a class="card" href="flip-clock/"><strong>Flip clock</strong><span>Animated clock cards with 12- or 24-hour time.</span></a>
     <a class="card" href="pomodoro/"><strong>Pomodoro timer</strong><span>A working focus timer with two break modes.</span></a>
+    <a class="card" href="weather/"><strong>Weather forecast</strong><span>Current conditions and up to seven forecast days.</span></a>
     <a class="card" href="clock/"><strong>Clock + date</strong><span>Live time, weekday, and date.</span></a>
     <a class="card" href="countdown/"><strong>Countdown</strong><span>Count down to any date or event.</span></a>
     <a class="card" href="month-left/"><strong>Time left this month</strong><span>Your original idea, rebuilt responsively.</span></a>
@@ -92,11 +102,11 @@
 <script>
   const el = (id) => document.getElementById(id);
   const widgetFields = {
-    "flip-clock": ["formatRow"], pomodoro: ["focusRow","shortRow","longRow"],
+    "flip-clock": ["formatRow"], pomodoro: ["focusRow","shortRow","longRow"], weather: ["locationRow","unitsRow","daysRow"],
     clock: [], countdown: ["dateRow"], "month-left": [], greeting: ["nameRow"], quote: [], progress: ["valueRow"]
   };
   function buildUrl() {
-    ["formatRow","dateRow","nameRow","valueRow","focusRow","shortRow","longRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
+    ["formatRow","dateRow","nameRow","valueRow","focusRow","shortRow","longRow","locationRow","unitsRow","daysRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
     const url = new URL(`${el("widget").value}/`, location.href);
     url.searchParams.set("theme", el("theme").value);
     el("customTheme").hidden = el("theme").value !== "custom";
@@ -113,6 +123,11 @@
       url.searchParams.set("focus", el("focus").value || "25");
       url.searchParams.set("short", el("short").value || "5");
       url.searchParams.set("long", el("long").value || "15");
+    }
+    if (el("widget").value === "weather") {
+      url.searchParams.set("location", el("location").value.trim() || "Dayton, Ohio");
+      url.searchParams.set("units", el("units").value);
+      url.searchParams.set("days", el("days").value || "7");
     }
     if (el("transparent").checked) url.searchParams.set("transparent", "1");
     el("url").textContent = url.href;
