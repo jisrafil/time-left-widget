@@ -21,6 +21,8 @@
       <label>Widget
         <select id="widget">
           <option value="flip-clock">Flip clock</option>
+          <option value="analog-clock">Bookish analog clock</option>
+          <option value="reading-soundtrack">Reading soundtrack</option>
           <option value="pomodoro">Pomodoro timer</option>
           <option value="weather">Weather forecast</option>
           <option value="clock">Clock + date</option>
@@ -38,6 +40,10 @@
         <select id="theme">
           <option value="master">Joni Master Hub</option>
           <option value="chairapy">Chairapy</option>
+          <option value="reading">Reading Nook</option>
+          <option value="breast-cancer">Breast Cancer Hope</option>
+          <option value="boho">Boho</option>
+          <option value="autumn">Autumn</option>
           <option value="custom">Custom colors — choose your own</option>
           <option value="cookbook">JP Cookbook</option>
           <option value="tech">Creative Tech</option>
@@ -79,6 +85,31 @@
         </select>
       </label>
       <label id="daysRow">Forecast days <input id="days" type="number" min="1" max="7" value="7"></label>
+      <label id="clockStyleRow">Clock face
+        <select id="clockStyle">
+          <option value="numbers">Classic numbers</option>
+          <option value="dots">Simple dots</option>
+          <option value="minimal">Minimal marks</option>
+        </select>
+      </label>
+      <label id="secondsRow"><input id="showSeconds" type="checkbox" checked style="width:auto;min-height:auto"> Show seconds hand</label>
+      <label id="clockDateRow">Date under clock
+        <select id="showClockDate">
+          <option value="1">Show date</option>
+          <option value="0">Hide date</option>
+        </select>
+      </label>
+      <fieldset id="playlistRow" hidden>
+        <legend>Reading soundtrack</legend>
+        <label>Spotify playlist URL or ID <input id="playlist" inputmode="url" value="https://open.spotify.com/playlist/14IatnY7Y8fv0CO29TohoP"></label>
+        <label>Small message <input id="soundtrackLabel" value="Press play and get lost in a book"></label>
+        <label>Player size
+          <select id="playerSize">
+            <option value="compact">Compact player</option>
+            <option value="full">Full playlist</option>
+          </select>
+        </label>
+      </fieldset>
       <fieldset id="linksRow" hidden>
         <legend>Quick links</legend>
         <small class="field-help">Add up to four public links. A blank label or URL hides that button.</small>
@@ -120,6 +151,8 @@
 
   <section class="cards">
     <a class="card" href="flip-clock/"><strong>Flip clock</strong><span>Animated clock cards with 12- or 24-hour time.</span></a>
+    <a class="card" href="analog-clock/?theme=reading"><strong>Bookish analog clock</strong><span>A calm analog clock with three faces, date, and optional seconds.</span></a>
+    <a class="card" href="reading-soundtrack/?theme=reading"><strong>Reading soundtrack</strong><span>A themed frame for any public Spotify playlist.</span></a>
     <a class="card" href="pomodoro/"><strong>Pomodoro timer</strong><span>A working focus timer with two break modes.</span></a>
     <a class="card" href="weather/"><strong>Weather forecast</strong><span>Current conditions and up to seven forecast days.</span></a>
     <a class="card" href="clock/"><strong>Clock + date</strong><span>Live time, weekday, and date.</span></a>
@@ -137,12 +170,13 @@
 <script>
   const el = (id) => document.getElementById(id);
   const widgetFields = {
-    "flip-clock": ["formatRow"], pomodoro: ["focusRow","shortRow","longRow"], weather: ["locationRow","unitsRow","daysRow"],
+    "flip-clock": ["formatRow"], "analog-clock": ["clockStyleRow","secondsRow","clockDateRow"], "reading-soundtrack": ["playlistRow"],
+    pomodoro: ["focusRow","shortRow","longRow"], weather: ["locationRow","unitsRow","daysRow"],
     clock: [], countdown: ["dateRow"], "month-left": [], greeting: ["nameRow"], quote: [], progress: ["valueRow"],
     "quick-links": ["linksRow"], "chairapy-status": [], "recipe-roulette": ["recipeCategoryRow"]
   };
   function buildUrl() {
-    ["formatRow","dateRow","nameRow","valueRow","focusRow","shortRow","longRow","locationRow","unitsRow","daysRow","linksRow","recipeCategoryRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
+    ["formatRow","dateRow","nameRow","valueRow","focusRow","shortRow","longRow","locationRow","unitsRow","daysRow","clockStyleRow","secondsRow","clockDateRow","playlistRow","linksRow","recipeCategoryRow"].forEach(id => el(id).hidden = !widgetFields[el("widget").value].includes(id));
     const url = new URL(`${el("widget").value}/`, location.href);
     url.searchParams.set("theme", el("theme").value);
     el("customTheme").hidden = el("theme").value !== "custom";
@@ -155,6 +189,16 @@
     if (el("widget").value === "greeting") url.searchParams.set("name", el("name").value.trim() || "Joni");
     if (el("widget").value === "progress") url.searchParams.set("value", el("value").value || "0");
     if (el("widget").value === "flip-clock") url.searchParams.set("hour12", el("hour12").value);
+    if (el("widget").value === "analog-clock") {
+      url.searchParams.set("style", el("clockStyle").value);
+      url.searchParams.set("seconds", el("showSeconds").checked ? "1" : "0");
+      url.searchParams.set("dateText", el("showClockDate").value);
+    }
+    if (el("widget").value === "reading-soundtrack") {
+      url.searchParams.set("playlist", el("playlist").value.trim());
+      url.searchParams.set("label", el("soundtrackLabel").value.trim());
+      url.searchParams.set("size", el("playerSize").value);
+    }
     if (el("widget").value === "pomodoro") {
       url.searchParams.set("focus", el("focus").value || "25");
       url.searchParams.set("short", el("short").value || "5");
@@ -177,6 +221,13 @@
     el("preview").src = url.href;
     return url.href;
   }
+  const titleDefaults = {"analog-clock":"Bookish time","reading-soundtrack":"Reading soundtrack"};
+  let previousWidget = el("widget").value;
+  el("widget").addEventListener("change", () => {
+    const nextWidget = el("widget").value;
+    if (titleDefaults[nextWidget] && (el("title").value === "Make today count" || el("title").value === titleDefaults[previousWidget])) el("title").value = titleDefaults[nextWidget];
+    previousWidget = nextWidget;
+  });
   el("builder").addEventListener("input", buildUrl);
   el("builder").addEventListener("change", buildUrl);
   async function copyText(value) {
