@@ -14,7 +14,7 @@ for(let value=1;value<=12;value+=1){const angle=value*30,outer=point(angle,101),
 }
 secondHand.hidden=!showSeconds;dateEl.hidden=!showDate;
 function tick(){const now=new Date(),seconds=now.getSeconds()+now.getMilliseconds()/1000,minutes=now.getMinutes()+seconds/60,hours=(now.getHours()%12)+minutes/60;
-document.getElementById('hourHand').style.transform=`rotate(${hours*30}deg)`;document.getElementById('minuteHand').style.transform=`rotate(${minutes*6}deg)`;secondHand.style.transform=`rotate(${seconds*6}deg)`;
+document.getElementById('hourHand').setAttribute('transform',`rotate(${hours*30} 120 120)`);document.getElementById('minuteHand').setAttribute('transform',`rotate(${minutes*6} 120 120)`);secondHand.setAttribute('transform',`rotate(${seconds*6} 120 120)`);
 dateEl.textContent=now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});clock.setAttribute('aria-label',now.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:showSeconds?'2-digit':undefined}));}
 tick();setInterval(tick,250);
 </script></body></html>
