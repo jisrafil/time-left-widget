@@ -27,6 +27,10 @@ Open `index.html` through GitHub Pages to use the visual builder and copy a fini
 
 Choose `custom` in the visual builder to set a one-off palette without editing code. Custom colors are stored in the generated URL.
 
+## Optional custom images
+
+Every widget can display a public HTTPS image as a corner decoration, centered watermark, or background image. The builder stores the image URL, style, position, and opacity in the generated embed URL. Use stable public image hosting; private files, local computer paths, and temporary signed URLs will not work. External image hosts receive the normal web request when a widget loads, so do not use sensitive or private images.
+
 ## Notion
 
 Type `/embed` in Notion and paste the generated HTTPS URL. Do not put private or sensitive information in query parameters because GitHub Pages is public.

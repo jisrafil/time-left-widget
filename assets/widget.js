@@ -33,5 +33,29 @@ function applyTheme() {
   });
 }
 
+function applyImage() {
+  const source = get("image", "").trim();
+  const mode = ["corner", "watermark", "background"].includes(get("imageMode", "")) ? get("imageMode") : "";
+  const position = ["top-right", "top-left", "bottom-right", "bottom-left", "center"].includes(get("imagePosition", "")) ? get("imagePosition") : "top-right";
+  if (!source || !mode) return;
+  let url;
+  try { url = new URL(source); } catch { return; }
+  if (url.protocol !== "https:") return;
+  const widget = document.querySelector(".widget");
+  if (!widget) return;
+  const image = document.createElement("img");
+  image.className = `custom-image custom-image--${mode} custom-image--${position}`;
+  image.src = url.href;
+  image.alt = "";
+  image.loading = "lazy";
+  image.decoding = "async";
+  image.referrerPolicy = "no-referrer";
+  image.style.setProperty("--image-opacity", String(clamp(get("imageOpacity", "0.25"), 0.05, 1)));
+  image.addEventListener("error", () => image.remove());
+  widget.prepend(image);
+  if (mode === "background") widget.classList.add("has-background-image");
+}
+
 applyTheme();
+applyImage();
 window.WidgetKit = { params, get, clamp, themes: THEMES };
