@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bookish Analog Clock</title><link rel="stylesheet" href="../assets/widget.css"></head>
+<body><main class="widget analog-widget"><div class="analog-shell"><div class="eyebrow" data-param="title">Bookish time</div><svg class="analog-face" viewBox="0 0 240 240" role="img" id="clock" aria-label="Analog clock"><circle class="clock-ring" cx="120" cy="120" r="112"/><g id="face"></g><line class="clock-hand hour-hand" id="hourHand" x1="120" y1="124" x2="120" y2="73"/><line class="clock-hand minute-hand" id="minuteHand" x1="120" y1="127" x2="120" y2="48"/><line class="clock-hand second-hand" id="secondHand" x1="120" y1="132" x2="120" y2="39"/><circle class="clock-pin" cx="120" cy="120" r="7"/></svg><p class="analog-date" id="date"></p></div></main>
+<script src="../assets/widget.js"></script><script>
+const style=['numbers','dots','minimal'].includes(WidgetKit.get('style','numbers'))?WidgetKit.get('style','numbers'):'numbers';
+const showSeconds=WidgetKit.get('seconds','1')!=='0',showDate=WidgetKit.get('dateText','1')!=='0';
+const face=document.getElementById('face'),secondHand=document.getElementById('secondHand'),dateEl=document.getElementById('date'),clock=document.getElementById('clock');
+function point(angle,radius){const radians=(angle-90)*Math.PI/180;return{x:120+Math.cos(radians)*radius,y:120+Math.sin(radians)*radius};}
+for(let value=1;value<=12;value+=1){const angle=value*30,outer=point(angle,101),inner=point(angle,style==='minimal'?(value%3===0?91:95):95);
+  if(style==='numbers'){const at=point(angle,91),node=document.createElementNS('http://www.w3.org/2000/svg','text');node.setAttribute('x',at.x);node.setAttribute('y',at.y);node.setAttribute('class','clock-number');node.textContent=value;face.append(node);}
+  else if(style==='dots'){const node=document.createElementNS('http://www.w3.org/2000/svg','circle');node.setAttribute('cx',outer.x);node.setAttribute('cy',outer.y);node.setAttribute('r',value%3===0?'4':'2.6');node.setAttribute('class','clock-dot');face.append(node);}
+  else{const node=document.createElementNS('http://www.w3.org/2000/svg','line');node.setAttribute('x1',inner.x);node.setAttribute('y1',inner.y);node.setAttribute('x2',outer.x);node.setAttribute('y2',outer.y);node.setAttribute('class','clock-mark');node.setAttribute('stroke-width',value%3===0?'4':'2');face.append(node);}
+}
+secondHand.hidden=!showSeconds;dateEl.hidden=!showDate;
+function tick(){const now=new Date(),seconds=now.getSeconds()+now.getMilliseconds()/1000,minutes=now.getMinutes()+seconds/60,hours=(now.getHours()%12)+minutes/60;
+document.getElementById('hourHand').style.transform=`rotate(${hours*30}deg)`;document.getElementById('minuteHand').style.transform=`rotate(${minutes*6}deg)`;secondHand.style.transform=`rotate(${seconds*6}deg)`;
+dateEl.textContent=now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});clock.setAttribute('aria-label',now.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:showSeconds?'2-digit':undefined}));}
+tick();setInterval(tick,250);
+</script></body></html>
