@@ -6,6 +6,8 @@ Self-hosted, subscription-free widgets for Joni's Notion hubs.
 
 - Clock and date
 - Animated flip clock
+- Bookish analog clock with three face styles
+- Reading soundtrack for public Spotify playlists
 - Pomodoro focus timer
 - Live weather forecast powered by Open-Meteo
 - Countdown
@@ -21,7 +23,7 @@ Open `index.html` through GitHub Pages to use the visual builder and copy a fini
 
 ## Themes
 
-`master`, `chairapy`, `cookbook`, `tech`, `kenwood`, `purple`, and `neutral`.
+`master`, `chairapy`, `reading`, `breast-cancer`, `boho`, `autumn`, `cookbook`, `tech`, `kenwood`, `purple`, and `neutral`.
 
 Choose `custom` in the visual builder to set a one-off palette without editing code. Custom colors are stored in the generated URL.
 
