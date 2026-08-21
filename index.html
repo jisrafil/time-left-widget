@@ -64,6 +64,29 @@
           <label>Text color <input id="customText" type="color" value="#4d190a"></label>
         </div>
       </fieldset>
+      <fieldset>
+        <legend>Optional custom image</legend>
+        <small class="field-help">Use a stable public HTTPS image link. Private, temporary, and computer file paths will not work.</small>
+        <label>Image URL <input id="imageUrl" inputmode="url" placeholder="https://example.com/my-image.png"></label>
+        <label>Image style
+          <select id="imageMode">
+            <option value="none">No image</option>
+            <option value="corner">Corner logo or decoration</option>
+            <option value="watermark">Centered watermark</option>
+            <option value="background">Background image</option>
+          </select>
+        </label>
+        <label>Image position
+          <select id="imagePosition">
+            <option value="top-right">Top right</option>
+            <option value="top-left">Top left</option>
+            <option value="bottom-right">Bottom right</option>
+            <option value="bottom-left">Bottom left</option>
+            <option value="center">Center</option>
+          </select>
+        </label>
+        <label>Image opacity <input id="imageOpacity" type="range" min="0.05" max="1" step="0.05" value="0.25"></label>
+      </fieldset>
       <label>Title or label <input id="title" value="Make today count"></label>
       <label id="formatRow">Clock format
         <select id="hour12">
@@ -183,6 +206,12 @@
     if (el("theme").value === "custom") {
       const colors = {bg:"customBg",surface:"customSurface",primary:"customPrimary",secondary:"customSecondary",accent:"customAccent",text:"customText"};
       Object.entries(colors).forEach(([param,id]) => url.searchParams.set(param,el(id).value));
+    }
+    if (el("imageMode").value !== "none" && el("imageUrl").value.trim()) {
+      url.searchParams.set("image", el("imageUrl").value.trim());
+      url.searchParams.set("imageMode", el("imageMode").value);
+      url.searchParams.set("imagePosition", el("imagePosition").value);
+      url.searchParams.set("imageOpacity", el("imageOpacity").value);
     }
     if (el("title").value.trim()) url.searchParams.set("title", el("title").value.trim());
     if (el("widget").value === "countdown" && el("date").value) url.searchParams.set("date", new Date(el("date").value).toISOString());
