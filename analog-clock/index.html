@@ -5,8 +5,9 @@
 <script src="../assets/widget.js"></script><script>
 const style=['numbers','dots','minimal'].includes(WidgetKit.get('style','numbers'))?WidgetKit.get('style','numbers'):'numbers';
 const showSeconds=WidgetKit.get('seconds','1')!=='0',showDate=WidgetKit.get('dateText','1')!=='0';
-const face=document.getElementById('face'),secondHand=document.getElementById('secondHand'),dateEl=document.getElementById('date'),clock=document.getElementById('clock');
+const face=document.getElementById('face'),hourHand=document.getElementById('hourHand'),minuteHand=document.getElementById('minuteHand'),secondHand=document.getElementById('secondHand'),dateEl=document.getElementById('date'),clock=document.getElementById('clock');
 function point(angle,radius){const radians=(angle-90)*Math.PI/180;return{x:120+Math.cos(radians)*radius,y:120+Math.sin(radians)*radius};}
+function setHand(hand,angle,radius){const end=point(angle,radius);hand.setAttribute('x1','120');hand.setAttribute('y1','120');hand.setAttribute('x2',end.x.toFixed(3));hand.setAttribute('y2',end.y.toFixed(3));hand.removeAttribute('transform');}
 for(let value=1;value<=12;value+=1){const angle=value*30,outer=point(angle,101),inner=point(angle,style==='minimal'?(value%3===0?91:95):95);
   if(style==='numbers'){const at=point(angle,91),node=document.createElementNS('http://www.w3.org/2000/svg','text');node.setAttribute('x',at.x);node.setAttribute('y',at.y);node.setAttribute('class','clock-number');node.textContent=value;face.append(node);}
   else if(style==='dots'){const node=document.createElementNS('http://www.w3.org/2000/svg','circle');node.setAttribute('cx',outer.x);node.setAttribute('cy',outer.y);node.setAttribute('r',value%3===0?'4':'2.6');node.setAttribute('class','clock-dot');face.append(node);}
@@ -14,7 +15,7 @@ for(let value=1;value<=12;value+=1){const angle=value*30,outer=point(angle,101),
 }
 secondHand.hidden=!showSeconds;dateEl.hidden=!showDate;
 function tick(){const now=new Date(),seconds=now.getSeconds()+now.getMilliseconds()/1000,minutes=now.getMinutes()+seconds/60,hours=(now.getHours()%12)+minutes/60;
-document.getElementById('hourHand').setAttribute('transform',`rotate(${hours*30} 120 120)`);document.getElementById('minuteHand').setAttribute('transform',`rotate(${minutes*6} 120 120)`);secondHand.setAttribute('transform',`rotate(${seconds*6} 120 120)`);
+setHand(hourHand,hours*30,48);setHand(minuteHand,minutes*6,73);setHand(secondHand,seconds*6,83);
 dateEl.textContent=now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});clock.setAttribute('aria-label',now.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:showSeconds?'2-digit':undefined}));}
 tick();setInterval(tick,250);
 </script></body></html>
