@@ -1,5 +1,6 @@
 :root { color-scheme: light; --ink:#2e2040; --purple:#8656a7; --pink:#d18aae; --paper:#fbf9fd; }
 * { box-sizing: border-box; }
+[hidden] { display:none !important; }
 body { margin:0; color:var(--ink); background:linear-gradient(135deg,#fbf9fd,#f4eef9); font-family:Inter,"Segoe UI",system-ui,sans-serif; }
 main { width:min(1180px,calc(100% - 28px)); margin:auto; padding:42px 0 64px; }
 header { display:grid; gap:10px; margin-bottom:26px; }
