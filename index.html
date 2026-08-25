@@ -273,6 +273,7 @@
   const incoming = new URLSearchParams(location.search);
   if ([...el("theme").options].some(option => option.value === incoming.get("theme"))) el("theme").value = incoming.get("theme");
   if ([...el("widget").options].some(option => option.value === incoming.get("widget"))) el("widget").value = incoming.get("widget");
+  if (titleDefaults[el("widget").value]) el("title").value = titleDefaults[el("widget").value];
   const next = new Date(); next.setDate(next.getDate() + 30); next.setMinutes(next.getMinutes() - next.getTimezoneOffset()); el("date").value = next.toISOString().slice(0,16);
   buildUrl();
 </script>
