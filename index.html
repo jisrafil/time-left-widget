@@ -22,7 +22,7 @@
         <select id="widget">
           <option value="flip-clock">Flip clock</option>
           <option value="analog-clock">Bookish analog clock</option>
-          <option value="reading-soundtrack">Reading soundtrack</option>
+          <option value="reading-soundtrack">Spotify playlist</option>
           <option value="pomodoro">Pomodoro timer</option>
           <option value="weather">Weather forecast</option>
           <option value="clock">Clock + date</option>
@@ -123,8 +123,8 @@
         </select>
       </label>
       <fieldset id="playlistRow" hidden>
-        <legend>Reading soundtrack</legend>
-        <label>Spotify playlist URL or ID <input id="playlist" inputmode="url" value="https://open.spotify.com/playlist/14IatnY7Y8fv0CO29TohoP"></label>
+        <legend>Spotify playlist</legend>
+        <label>Spotify playlist URL or ID <input id="playlist" inputmode="url" value="https://open.spotify.com/playlist/4ORIxTGwbBrKtsNkPvbFE5"></label>
         <label>Small message <input id="soundtrackLabel" value="Press play and get lost in a book"></label>
         <label>Player size
           <select id="playerSize">
@@ -175,7 +175,7 @@
   <section class="cards">
     <a class="card" href="flip-clock/"><strong>Flip clock</strong><span>Animated clock cards with 12- or 24-hour time.</span></a>
     <a class="card" href="analog-clock/?theme=reading"><strong>Bookish analog clock</strong><span>A calm analog clock with three faces, date, and optional seconds.</span></a>
-    <a class="card" href="reading-soundtrack/?theme=reading"><strong>Reading soundtrack</strong><span>A themed frame for any public Spotify playlist.</span></a>
+    <a class="card" href="reading-soundtrack/?theme=reading"><strong>Spotify playlist</strong><span>A themed Spotify player for any public playlist.</span></a>
     <a class="card" href="pomodoro/"><strong>Pomodoro timer</strong><span>A working focus timer with two break modes.</span></a>
     <a class="card" href="weather/"><strong>Weather forecast</strong><span>Current conditions and up to seven forecast days.</span></a>
     <a class="card" href="clock/"><strong>Clock + date</strong><span>Live time, weekday, and date.</span></a>
@@ -250,7 +250,7 @@
     el("preview").src = url.href;
     return url.href;
   }
-  const titleDefaults = {"analog-clock":"Bookish time","reading-soundtrack":"Reading soundtrack"};
+  const titleDefaults = {"analog-clock":"Bookish time","reading-soundtrack":"Spotify playlist"};
   let previousWidget = el("widget").value;
   el("widget").addEventListener("change", () => {
     const nextWidget = el("widget").value;
