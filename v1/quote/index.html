@@ -1,0 +1,4 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quote Widget</title><link rel="stylesheet" href="../assets/widget.css"></head>
+<body><main class="widget"><div class="stack"><div class="eyebrow" data-param="title">A little reminder</div><div class="quote-mark">“</div><p class="quote" id="quote"></p></div></main><script src="../assets/widget.js"></script><script>
+const defaults=['Make the next right move.','Done is allowed to be beautiful.','Protect your peace and your momentum.','Small steps still move the whole plan.'];const quotes=WidgetKit.get('quotes','').split('|').map(q=>q.trim()).filter(Boolean);const list=quotes.length?quotes:defaults;const day=Math.floor(Date.now()/864e5);quote.textContent=list[day%list.length];
+</script></body></html>

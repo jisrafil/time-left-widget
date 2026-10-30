@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Flip Clock</title>
+  <link rel="stylesheet" href="../assets/widget.css">
+</head>
+<body>
+<main class="widget flip-widget">
+  <div class="flip-stack">
+    <div class="eyebrow" data-param="title">Make today count</div>
+    <div class="flip-clock" id="clock" role="timer" aria-live="off">
+      <div class="flip-card" id="hoursCard"><span class="flip-number" id="hours">00</span></div>
+      <span class="flip-colon" aria-hidden="true">:</span>
+      <div class="flip-card" id="minutesCard"><span class="flip-number" id="minutes">00</span></div>
+      <span class="ampm" id="ampm">AM</span>
+    </div>
+    <p class="subtext" id="date"></p>
+  </div>
+</main>
+<script src="../assets/widget.js"></script>
+<script>
+const hour12=WidgetKit.get('hour12','1')!=='0';
+const hoursEl=document.getElementById('hours'),minutesEl=document.getElementById('minutes'),ampmEl=document.getElementById('ampm'),dateEl=document.getElementById('date'),clockEl=document.getElementById('clock');
+function setCard(cardId,node,value){if(node.textContent===value)return;node.textContent=value;const card=document.getElementById(cardId);card.classList.remove('is-flipping');void card.offsetWidth;card.classList.add('is-flipping');}
+function tick(){const now=new Date();let hour=now.getHours();const suffix=hour>=12?'PM':'AM';if(hour12)hour=hour%12||12;setCard('hoursCard',hoursEl,String(hour).padStart(2,'0'));setCard('minutesCard',minutesEl,String(now.getMinutes()).padStart(2,'0'));ampmEl.textContent=hour12?suffix:'';ampmEl.hidden=!hour12;dateEl.textContent=now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});clockEl.setAttribute('aria-label',now.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',hour12}));}
+tick();setInterval(tick,1000);
+</script>
+</body>
+</html>

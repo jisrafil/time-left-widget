@@ -1,0 +1,4 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Greeting Widget</title><link rel="stylesheet" href="../assets/widget.css"></head>
+<body><main class="widget"><div class="stack"><div class="eyebrow" data-param="title">Welcome back</div><p class="display" id="greeting">Hello</p><p class="subtext" id="date"></p></div></main><script src="../assets/widget.js"></script><script>
+const hour=new Date().getHours();const part=hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';document.getElementById('greeting').textContent=`${part}, ${WidgetKit.get('name','Joni')}`;document.getElementById('date').textContent=new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+</script></body></html>

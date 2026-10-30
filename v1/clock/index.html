@@ -1,0 +1,4 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Clock Widget</title><link rel="stylesheet" href="../assets/widget.css"></head>
+<body><main class="widget"><div class="stack"><div class="eyebrow" data-param="title">Right now</div><p class="display" id="time">--:--</p><p class="subtext" id="date"></p></div></main><script src="../assets/widget.js"></script><script>
+function tick(){const now=new Date();document.getElementById('time').textContent=now.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});document.getElementById('date').textContent=now.toLocaleDateString([], {weekday:'long',month:'long',day:'numeric',year:'numeric'});}tick();setInterval(tick,1000);
+</script></body></html>
