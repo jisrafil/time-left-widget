@@ -1,0 +1,4 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Progress Widget</title><link rel="stylesheet" href="../assets/widget.css"></head>
+<body><main class="widget"><div class="progress-wrap"><div class="eyebrow">Progress</div><div class="ring" id="ring"><span class="ring-value" id="value">0%</span></div><h1 class="title" data-param="title">Keep going</h1></div></main><script src="../assets/widget.js"></script><script>
+const amount=WidgetKit.clamp(WidgetKit.get('value','68'),0,100);document.getElementById('ring').style.setProperty('--value',amount);document.getElementById('value').textContent=`${amount}%`;
+</script></body></html>
